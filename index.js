@@ -322,18 +322,19 @@ function generateImage (opt, callback) {
   let shapeDesc = utils.stringifyContours(contours);
 
   if (contours.some(cont => cont.length === 1)) console.log('length is 1, failed to normalize glyph');
+  const factor = 0.25;
   const scale = fontSize / font.unitsPerEm;
   const baseline = font.tables.os2.sTypoAscender * (fontSize / font.unitsPerEm);
   const pad = distanceRange >> 1;
-  let width = Math.round(bBox.x2 - bBox.x1) + pad + pad;
-  let height = Math.round(bBox.y2 - bBox.y1) + pad + pad;
-  let xOffset = Math.round(-bBox.x1) + pad;
-  let yOffset = Math.round(-bBox.y1) + pad;
+  let width = Math.round((bBox.x2 - bBox.x1) * factor) + pad + pad;
+  let height = Math.round((bBox.y2 - bBox.y1) * factor) + pad + pad;
+  let xOffset = Math.round((-bBox.x1) * factor) + pad;
+  let yOffset = Math.round((-bBox.y1) * factor) + pad;
   if (roundDecimal != null) {
     xOffset = utils.roundNumber(xOffset, roundDecimal);
     yOffset = utils.roundNumber(yOffset, roundDecimal);
   }
-  let command = `${binaryPath} ${fieldType} -format text -stdout -size ${width} ${height} -translate ${xOffset} ${yOffset} -pxrange ${distanceRange} -defineshape "${shapeDesc}"`;
+  let command = `${binaryPath} ${fieldType} -format text -scale ${factor} -autoframe -stdout -size ${width} ${height} -translate ${xOffset} ${yOffset} -pxrange ${distanceRange} -defineshape "${shapeDesc}"`;
 
   exec(command, (err, stdout, stderr) => {
     if (err) return callback(err);

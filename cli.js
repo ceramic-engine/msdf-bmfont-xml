@@ -29,6 +29,7 @@ args
   .option('-d, --round-decimal <digit>', 'rounded digits of the output font file.', 0)
   .option('-v, --vector', 'generate svg vector file for debuging', false)
   .option('-u, --reuse [file.cfg]', 'save/create config file for reusing settings', false)
+  .option('    --factor <factor>', 'a factor used to tweak the result. dirty workaround.', 1)
   .option('    --smart-size', 'shrink atlas to the smallest possible square', true)
   .option('    --pot', 'atlas size shall be power of 2', false)
   .option('    --square', 'atlas size shall be square', false)

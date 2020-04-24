@@ -158,6 +158,7 @@ function generateBMFont (fontPath, opt, callback) {
 
   mapLimit(charset, 15, (char, cb) => {
     generateImage({
+      factor: opt.factor,
       binaryPath,
       font,
       char,
@@ -322,7 +323,7 @@ function generateImage (opt, callback) {
   let shapeDesc = utils.stringifyContours(contours);
 
   if (contours.some(cont => cont.length === 1)) console.log('length is 1, failed to normalize glyph');
-  const factor = 0.25;
+  const factor = 1.0 / parseFloat(opt.factor);
   const scale = fontSize / font.unitsPerEm;
   const baseline = font.tables.os2.sTypoAscender * (fontSize / font.unitsPerEm);
   const pad = distanceRange >> 1;
@@ -335,6 +336,9 @@ function generateImage (opt, callback) {
     yOffset = utils.roundNumber(yOffset, roundDecimal);
   }
   let command = `${binaryPath} ${fieldType} -format text -scale ${factor} -autoframe -stdout -size ${width} ${height} -translate ${xOffset} ${yOffset} -pxrange ${distanceRange} -defineshape "${shapeDesc}"`;
+  if (factor == 1) {
+    command = `${binaryPath} ${fieldType} -format text -stdout -size ${width} ${height} -translate ${xOffset} ${yOffset} -pxrange ${distanceRange} -defineshape "${shapeDesc}"`;
+  }
 
   exec(command, (err, stdout, stderr) => {
     if (err) return callback(err);
